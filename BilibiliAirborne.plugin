@@ -24,6 +24,10 @@ cacheTTL = input,3600,type=number,tag=缓存有效秒数
 cacheCapacity = input,64,type=number,tag=缓存条目上限
 diagnostics = switch,false,tag=安全诊断
 
+[Rule]
+DOMAIN,raw.githubusercontent.com,PROXY
+DOMAIN,bsbsb.top,PROXY
+
 [Script]
 response if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.app\.(?:view|viewunite)\.v1\.View\/ViewProgress$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/scripts/airborne.js", {${enabled}, ${module}, ${diagnostics}}) with enable=${enabled}, tag="独立空降播放器适配", timeout=10, requires_body=true, binary_body_mode=true
 request if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/scripts/airborne.js", {${enabled}, ${sponsor}, ${intro}, ${outro}, ${preview}, ${selfpromo}, ${interaction}, ${filler}, ${music_offtopic}, ${minDuration}, ${offset}, ${cacheTTL}, ${cacheCapacity}, ${diagnostics}}) with enable=${enabled}, tag="独立空降弹幕注入", timeout=10, requires_body=true, binary_body_mode=true
