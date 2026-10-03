@@ -1,5 +1,5 @@
 #!name = 哔哩哔哩八类别空降助手 Beta
-#!desc = 增强 DmSegMobile 八类别注入；须保留原去广告插件 sponsorBlock 与 ViewProgress 响应，仅禁用其 DmSegMobile 请求。未经真机验证。
+#!desc = 独立自动空降：ViewProgress 模块适配与 DmSegMobile 八类别注入，无需原插件；建议禁用原插件做基线测试。Beta 未经真机验证。
 #!author = beckyeeky
 #!homepage = https://github.com/beckyeeky/loon-bilibili-airborne/tree/feature/full-airborne
 #!system = iOS,iPadOS
@@ -8,6 +8,7 @@
 #!type = normal
 
 [Argument]
+module = select,"auto","universal","hd","inter",tag=播放器模块
 enabled = switch,true,tag=启用空降
 sponsor = switch,true,tag=赞助广告
 intro = switch,false,tag=开场
@@ -24,6 +25,7 @@ cacheCapacity = input,64,type=number,tag=缓存条目上限
 diagnostics = switch,false,tag=安全诊断
 
 [Script]
+response if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.app\.(?:view|viewunite)\.v1\.View\/ViewProgress$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/scripts/airborne.js", {${enabled}, ${module}, ${diagnostics}}) with enable=${enabled}, tag="独立空降播放器适配", timeout=10, requires_body=true, binary_body_mode=true
 request if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/scripts/airborne.js", {${enabled}, ${sponsor}, ${intro}, ${outro}, ${preview}, ${selfpromo}, ${interaction}, ${filler}, ${music_offtopic}, ${minDuration}, ${offset}, ${cacheTTL}, ${cacheCapacity}, ${diagnostics}}) with enable=${enabled}, tag="独立空降弹幕注入", timeout=10, requires_body=true, binary_body_mode=true
 
 [Mitm]
