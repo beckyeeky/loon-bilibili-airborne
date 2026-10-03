@@ -32,4 +32,8 @@ URL 前缀：`https://raw.githubusercontent.com/kokoryh/chronos/69a8996b1f1311b6
 
 ## 严格失败策略
 
-HTTP 只读服务错误、坏 JSON、未知 CID、非法 protobuf、无法支持的压缩或 unary 多消息都不注入。ViewProgress 多帧只在识别到明确 MD5 时替换。未知协议版本应先更新合成测试和审计再添加映射，不回退按 UA 强制选择模块。
+HTTP 只读服务错误、坏 JSON、未知 CID、非法 protobuf、无法支持的压缩或 unary 多消息都不注入。
+
+当前发布采用依赖模式：本插件不注册或执行 ViewProgress 响应。上述字段、固定 URL 与 MD5 表保留为离线审计基线；`chronos()` 单元测试工具仍对未知 MD5 no-op，不能把它当成当前真机依赖的行为。已审计原响应实现未知 MD5 会按 UA 回退 universal/hd/inter，设置 md5/file 并移除 sign；依赖模式交由原插件执行该行为，不新增盲目兜底，也不承诺全部版本兼容。
+
+通用模块除了检查固定文案与结束秒数，还在弹幕视图创建时要求 `videoPlayer.currentTime <= meta.progress` 才自动 seek；迟到创建或回看条件需要真机日志判断。客户端缓存、响应脚本第一匹配抢占、原 sponsorBlock 关闭、资源加载失败均可能产生“有文字但无 seek”，目前无用户日志，不能确定是哪一个。
