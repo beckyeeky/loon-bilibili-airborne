@@ -2,7 +2,7 @@ name: Offline tests
 on:
   pull_request:
   push:
-    branches: [feature/full-airborne]
+    branches: [main, feature/full-airborne]
 permissions:
   contents: read
 jobs:

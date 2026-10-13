@@ -1,7 +1,7 @@
 #!name = 哔哩哔哩八类别空降助手 Beta
 #!desc = 独立自动空降：ViewProgress 模块适配与 DmSegMobile 八类别注入，无需原插件；建议禁用原插件做基线测试。Beta 未经真机验证。
 #!author = beckyeeky
-#!homepage = https://github.com/beckyeeky/loon-bilibili-airborne/tree/feature/full-airborne
+#!homepage = https://github.com/beckyeeky/loon-bilibili-airborne
 #!system = iOS,iPadOS
 #!loon_version = 3.5.1(998)
 #!tag = 视频,工具,Beta
@@ -29,8 +29,8 @@ DOMAIN,raw.githubusercontent.com,PROXY
 DOMAIN,bsbsb.top,PROXY
 
 [Script]
-response if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.app\.(?:view|viewunite)\.v1\.View\/ViewProgress$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/scripts/airborne.js", {${enabled}, ${module}, ${diagnostics}}) with enable=${enabled}, tag="独立空降播放器适配", timeout=10, requires_body=true, binary_body_mode=true
-request if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/scripts/airborne.js", {${enabled}, ${sponsor}, ${intro}, ${outro}, ${preview}, ${selfpromo}, ${interaction}, ${filler}, ${music_offtopic}, ${minDuration}, ${offset}, ${cacheTTL}, ${cacheCapacity}, ${diagnostics}}) with enable=${enabled}, tag="独立空降弹幕注入", timeout=10, requires_body=true, binary_body_mode=true
+response if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.app\.(?:view|viewunite)\.v1\.View\/ViewProgress$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/main/scripts/airborne.js", {${enabled}, ${module}, ${diagnostics}}) with enable=${enabled}, tag="独立空降播放器适配", timeout=10, requires_body=true, binary_body_mode=true
+request if ${url} ~= /^https:\/\/(?:grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$/ && ${request.method} == "POST" then script("https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/main/scripts/airborne.js", {${enabled}, ${sponsor}, ${intro}, ${outro}, ${preview}, ${selfpromo}, ${interaction}, ${filler}, ${music_offtopic}, ${minDuration}, ${offset}, ${cacheTTL}, ${cacheCapacity}, ${diagnostics}}) with enable=${enabled}, tag="独立空降弹幕注入", timeout=10, requires_body=true, binary_body_mode=true
 
 [Mitm]
 hostname = grpc.biliapi.net,app.bilibili.com

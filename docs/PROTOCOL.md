@@ -34,6 +34,8 @@ URL 前缀：`https://raw.githubusercontent.com/kokoryh/chronos/69a8996b1f1311b6
 
 冷缓存并行执行片段 GET 与原 DmSegMobile gRPC POST，降低串行累计延迟；暖缓存读取片段后只执行原弹幕重请求。片段 404 可负缓存；网络错误、超时、500、坏 JSON 不是可信空列表，不能负缓存。查询失败但原弹幕已有效返回时，应直接返回已取得的原响应而不注入；不要再次放行导致客户端重复重请求。原弹幕失败或无法安全表示时才放行原请求。每条路径恰好一次 `$done`，晚到回调不得再次结束脚本或覆盖结果。
 
+归一化顺序固定为：原始秒筛选（CID、类别、`actionType=skip`、`0 <= start < end`、`end-start >= minDuration`）→ 合并原始重叠区间 → 对合并后的区间施加一次起跳偏移（终点不偏移）→ 转毫秒并只保留起跳点落在当前 360 秒分段的区间。`minDuration` 因此只衡量原始片段，不衡量合并后的跨度。gRPC 帧的解压后负载预算为**累计** 4 MiB，超限 fail-open。HTTP 回调完成时先置 `settled` 再清理计时器：清理接口缺失或抛错不影响 resolve/reject，晚到回调仅由 `settled` 拦截。
+
 运行入口独立处理 ViewProgress 响应和 DmSegMobile 请求。模块 auto 对已知 MD5 精确映射，未知 MD5 按 UA 中完整产品 token 识别 universal/hd/inter，不只检查前缀，也不接受任意子串误匹配；未知 UA 安全 no-op。手选模块覆盖映射。回退不保证兼容，移除 sign 不保证客户端接受。保留 video_guide、dm 和未知字段，不复制去广告逻辑。
 
 ## Loon 官方 API 契约核验

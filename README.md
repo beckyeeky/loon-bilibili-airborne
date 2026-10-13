@@ -4,8 +4,8 @@
 
 ## 安装与试用
 
-- [功能分支插件原文／更新地址](https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/feature/full-airborne/BilibiliAirborne.plugin)
-- [导入 Loon](loon://import?plugin=https%3A%2F%2Fraw.githubusercontent.com%2Fbeckyeeky%2Floon-bilibili-airborne%2Ffeature%2Ffull-airborne%2FBilibiliAirborne.plugin)
+- [插件原文／更新地址（main 发布路径）](https://raw.githubusercontent.com/beckyeeky/loon-bilibili-airborne/main/BilibiliAirborne.plugin)
+- [导入 Loon](loon://import?plugin=https%3A%2F%2Fraw.githubusercontent.com%2Fbeckyeeky%2Floon-bilibili-airborne%2Fmain%2FBilibiliAirborne.plugin)
 
 要求 Loon 3.5.1 (998)+，复写、脚本与 MitM 开启，证书安装并信任，解密 grpc.biliapi.net、app.bilibili.com。
 
@@ -48,11 +48,11 @@ DOMAIN,bsbsb.top,PROXY
 
 ## 契约与边界
 
-- 当前 CID、启用类别、`actionType=skip`、有效时间且达到最小时长才注入；排序、去重、合并重叠，仅注入起跳点所属 360 秒分段。
+- 当前 CID、启用类别、`actionType=skip` 与时间有效性先按**原始秒**判断（`minDuration` 只衡量原始片段，不衡量合并后的区间），再合并原始重叠区间，最后对合并后的区间施加一次起跳偏移（终点不偏移）并转换为毫秒；仅注入起跳点所属 360 秒分段。
 - 保留 `content=空指部已就位`、`action=airborne:结束毫秒`、mode=5、attr=1310724、type=1、dmFrom=1。Chronos 将结束毫秒除以 1000 后 seek。不能随意改文案。
 - 正常显示空指弹幕只说明注入路径可能成功，**不证明修改版 Chronos 已加载或执行 seek**。审计资源还要求创建弹幕视图时 `currentTime <= progress`，迟到/预加载/回看可能影响触发。
 - 只获取社区片段，不做提交/投票/账户写入。原鉴权头仅随重请求发往原哔哩哔哩 URL，不转发给片段服务。
-- 原弹幕/未知 protobuf 字段保留；支持 wire 0/1/2/5，gRPC identity 与 gzip；未知压缩、HTTP Content-Encoding、坏帧、超 4 MiB 或超 64 帧 fail-open。DmSegMobile 多消息不改写。每次仅一次 `$done`。
+- 原弹幕/未知 protobuf 字段保留；支持 wire 0/1/2/5，gRPC identity 与 gzip；未知压缩、HTTP Content-Encoding、坏帧、累计解压后总大小超 4 MiB 或超 64 帧 fail-open。DmSegMobile 多消息不改写。每次仅一次 `$done`。
 - 命名空间 `loon.airborne.v1.cache` 缓存 BV/CID/类别的原始片段，404 负缓存，网络/500 不缓存；时长/偏移变化立即重算。并发可能降低缓存命中率，不改变 CID 校验；不清空其他脚本存储。
 - 本插件独立适配 Chronos：单条 response 匹配 view.v1 / viewunite.v1，保留 video_guide、dm 与未知字段，仅替换 Chronos md5/file 并移除 sign。auto 优先精确 MD5 映射，未知 MD5 按 UA 产品 token 中的 bili-hd / bili-inter / bili-universal / bili/数字 / Bilibili 识别客户端回退，不仅检查字符串开头。未知或缺失 UA 安全 no-op；可确认客户端类型后手选 universal（普通版）、hd（HD）、inter（国际版），手选覆盖精确映射。回退和强制模块可能不兼容新版客户端，不保证全版本可用。
 
@@ -75,4 +75,4 @@ DOMAIN,bsbsb.top,PROXY
 
 本仓库原创 JS/测试采用 MIT；不复制或再分发第三方脚本和 ZIP。实际播放器跳转使用固定提交 [kokoryh/chronos](https://github.com/kokoryh/chronos/tree/69a8996b1f1311b606021e3f194b0390280ab618)，仓库 LICENSE 为 GPL-3.0，模块元数据标识 The Danmaku Flame Master Authors © bilibili。第三方许可和资源署名保留；仓库级许可不代表所有图片可再分发。启用本插件意味着接受第三方模块执行风险，MD5 不是安全签名。模块可达、签名被客户端接受和真机兼容仍待验证。
 
-开发：Node.js 20+，`npm test`，无 npm 依赖。离线协议与资源记录见 [PROTOCOL](docs/PROTOCOL.md)、[VALIDATION](docs/VALIDATION.md)。功能分支 `feature/full-airborne` 不合 main；重现请固定提交 SHA 的脚本地址。参考 [官方 Script V2](https://nsloon.app/docs/Script/script_v2)。
+开发：Node.js 20+，`npm test`，无 npm 依赖。离线协议与资源记录见 [PROTOCOL](docs/PROTOCOL.md)、[VALIDATION](docs/VALIDATION.md)。发布路径为 `main`（插件内脚本地址与安装入口均指向该分支）；`feature/full-airborne` 等历史分支保留，仅用于固定提交 SHA 重现。参考 [官方 Script V2](https://nsloon.app/docs/Script/script_v2)。
